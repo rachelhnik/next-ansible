@@ -60,6 +60,10 @@ jobs:
         run: |
           echo "server ansible_host=$SSH_HOST ansible_user=$SSH_USERNAME ansible_ssh_private_key_file=private.key" >> inventory
 
+      - name: Install Ansible roles
+        run: |
+          ansible-galaxy install geerlingguy.swap
+
       - name: Run ansible playbook
         run: |
           ansible-playbook -i inventory \
