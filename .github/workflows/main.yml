@@ -35,7 +35,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-
+    needs: build
     steps:
       - name: Checkout node
         uses: actions/checkout@v2
