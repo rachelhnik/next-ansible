@@ -1,0 +1,72 @@
+name: Build, push and deploy
+
+env:
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  SSH_HOST: ${{ vars.SSH_HOST }}
+  SSH_USERNAME: ${{ vars.SSH_USERNAME }}
+  DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
+  IMAGE_NAME: ${{ vars.IMAGE_NAME }}
+  ENABLE_SSL: ${{ vars.ENABLE_SSL }}
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Login to dockerhub
+        uses: |
+          echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
+
+      - name: Build Docker Image
+        run: docker build -t $IMAGE_NAME:latest .
+
+      - name: Push Docker Image
+        run: docker push $IMAGE_NAME:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout node
+        uses: actions/checkout@v2
+
+      - name: Create SSH key
+        run: |
+          echo "$SSH_PRIVATE_KEY" > private.key
+          chmod 600 private.key
+          eval `ssh-agent -s`
+          ssh-add private.key
+          mkdir -p ~/.ssh
+          touch ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+          ssh-keyscan $SSH_HOST >> ~/.ssh/known_hosts
+
+      - name: Install ansible
+        run: |
+          sudo apt update
+          sudo apt install -y ansible
+
+      - name: Create ansible inventory
+        run: |
+          echo "server ansible_host=$SSH_HOST ansible_user=$SSH_USERNAME ansible_ssh_private_key_file=private.key" >> inventory
+
+      - name: Run ansible playbook
+        run: |
+          ansible playbook -i inventory \
+            --extra-vars "image_name=$IMAGE_NAME" \
+            --extra-vars "domain_name=$DOMAIN_NAME" \
+            --extra-vars "dockerhub_username=$DOCKERHUB_USERNAME" \
+            --extra-vars "dockerhub_token=$DOCKERHUB_TOKEN" \
+            --extra-vars "enable_ssl=$ENABLE_SSL" \
+            devops/playbook.yml
