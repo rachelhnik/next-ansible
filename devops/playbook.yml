@@ -6,7 +6,7 @@
     DOCKERHUB_USERNAME: "{{dockerhub_username}}"
     DOCKERHUB_TOKEN: "{{dockerhub_token}}"
     DOMAIN_NAME: "{{ domain_name }}"
-    NGINX_CONFIG_FILE: /etc/nginx/sites-available/{{ DDOMAIN_NAME }}.conf
+    NGINX_CONFIG_FILE: /etc/nginx/sites-available/{{ DOMAIN_NAME }}.conf
     NGINX_ENABLE_FILE: /etc/nginx/sites-enabled/{{ DOMAIN_NAME }}.conf
     ENABLE_SSL: if "{{ enable_ssl }}" == "true" else false
     APP_PORT: 3001
