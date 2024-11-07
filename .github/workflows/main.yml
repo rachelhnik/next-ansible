@@ -62,7 +62,7 @@ jobs:
 
       - name: Run ansible playbook
         run: |
-          ansible playbook -i inventory \
+          ansible-playbook -i inventory \
             --extra-vars "image_name=$IMAGE_NAME" \
             --extra-vars "domain_name=$DOMAIN_NAME" \
             --extra-vars "dockerhub_username=$DOCKERHUB_USERNAME" \
