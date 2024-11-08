@@ -58,6 +58,7 @@
       docker_image:
         name: "{{ IMAGE_NAME }}"
         source: pull
+        force_source: yes
 
     - name: Remove Docker container if exists
       docker_container:
