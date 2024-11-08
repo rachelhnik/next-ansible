@@ -59,6 +59,11 @@
         name: "{{ IMAGE_NAME }}"
         source: pull
 
+    - name: Remove Docker container if exists
+      docker_container:
+        name: "{{ DOMAIN_NAME }}"
+        state: absent
+
     - name: Run Docker container
       docker_container:
         name: "{{ DOMAIN_NAME }}"
