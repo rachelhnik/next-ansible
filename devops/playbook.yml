@@ -59,10 +59,11 @@
         name: "{{ IMAGE_NAME }}"
         source: pull
 
-    - name: Run docker container
+    - name: Run Docker container
       docker_container:
         name: "{{ DOMAIN_NAME }}"
         image: "{{ IMAGE_NAME }}"
+        image_name_mismatch: recreate
         state: started
         restart_policy: always
         ports:
