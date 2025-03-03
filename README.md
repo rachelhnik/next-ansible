@@ -1,40 +1,95 @@
-This is a CICD deployment project which uses github actions, ansible and docker for seamless deployment.
+# Devops CICD project deployment guide
 
-## Getting Started
+![Logo](https://lucid.app/publicSegments/view/0cd79e1f-0475-421d-a38e-b059472fe5e0/image.png)
 
-First, run the development server:
+## Tech Stack
+
+This project leverages the following technologies for CI/CD and deployment:
+
+- GitHub Actions – Automated workflows for continuous integration and deployment
+
+- Docker – Containerization of the application
+
+- Docker Hub – Hosting and managing container images
+
+- Nginx – Reverse proxy for handling web traffic
+
+- Ansible – Configuration management and automation
+
+- AWS EC2 – Cloud infrastructure for hosting the application
+
+## Deployment Prcess
+
+1. Generate SSH Key Pair
+
+To enable secure authentication, generate an SSH key pair:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+ ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+
 ```
 
-<p align="center">
-  <img src="https://capsule-render.vercel.app/api?text=Hey Everyone!🕹️&animation=fadeIn&type=waving&color=gradient&height=100"/>
-</p>
+- Copy the private key and add it to GitHub Secrets as SSH_PRIVATE_KEY.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Copy the public key and add it to the server known_host file.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2. Configure Required Secrets and Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### GitHub Secrets
 
-## Learn More
+| Secret Name          | Description                                                       |
+| -------------------- | ----------------------------------------------------------------- |
+| `SSH_PRIVATE_KEY`    | Private SSH key for authenticating GitHub Actions with the server |
+| `DOCKERHUB_USERNAME` | Docker Hub username for pushing images                            |
+| `DOCKERHUB_TOKEN`    | Docker Hub access token for authentication                        |
 
-To learn more about Next.js, take a look at the following resources:
+### GitHub Variables
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Name           | Description                              |
+| -------------- | ---------------------------------------- |
+| `SSH_HOST`     | EC2 server IP address                    |
+| `SSH_USERNAME` | SSH username (e.g., `ubuntu`)            |
+| `DOMAIN_NAME`  | Domain name for deployment               |
+| `IMAGE_NAME`   | Docker image name                        |
+| `ENABLE_SSL`   | Set to `true` to enable SSL with Certbot |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Workflow Automation (CI/CD)
 
-## Deploy on Vercel
+This project follows an automated deployment workflow using GitHub Actions, Docker, and Ansible.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Build Stage
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+On every push to the main branch, GitHub Actions triggers the build workflow.
+
+The application is containerized using Docker.
+
+The built image is pushed to Docker Hub.
+
+2. Deployment Stage
+
+Ansible automates the configuration management process.
+
+It installs necessary dependencies such as Docker, Nginx, and Certbot.
+
+Logs into Docker Hub, pulls the latest Docker image, and runs the container.
+
+Configures Nginx as a reverse proxy.
+
+Generates and configures an SSL certificate if ENABLE_SSL is set to true.
+
+3. Successful Deployment
+
+Once all stages complete successfully, the application is live and accessible via the configured domain name.
+
+## Conclusion
+
+This setup ensures a streamlined, automated, and secure deployment process. By leveraging GitHub Actions, Docker, and Ansible, we achieve reproducibility, scalability, and ease of maintenance across different environments.
+
+## Contributing
+
+Contributions are always welcome!
+Please submit a pull request or open an issue for discussion.
+
+## Contact
+
+For any inquiries or issues, feel free to contact rachel.shwehnit@gmail.com. 🚀
