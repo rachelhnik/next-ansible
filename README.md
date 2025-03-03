@@ -1,4 +1,4 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+This is a CICD deployment project which uses github actions, ansible and docker for seamless deployment.
 
 ## Getting Started
 
@@ -13,6 +13,10 @@ pnpm dev
 # or
 bun dev
 ```
+
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?text=Hey Everyone!🕹️&animation=fadeIn&type=waving&color=gradient&height=100"/>
+</p>
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
